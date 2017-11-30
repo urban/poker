@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "fantasy-land": "3.4.0",
+    "line-by-line": "0.1.5",
+    "ramda": "0.25.0"
+  },
+  "scripts": {
+    "build": "babel src/ -d dist/",
+    "start": "babel-node ./src/index.js",
+    "format": "prettier --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\"",
+    "flow": "flow status",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-plugin-transform-class-properties": "6.24.1",
+    "babel-preset-env": "1.6.1",
+    "babel-preset-flow": "6.23.0",
+    "flow-bin": "0.61.0",
+    "jest-cli": "21.2.1",
+    "prettier": "1.8.2"
+  }
+}
