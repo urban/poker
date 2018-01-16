@@ -131,22 +131,24 @@ export default class HandValue {
     return new HandValue(cards)
   }
 
-  cards: Array<Card>
-  value: number
+  value: [{[string]: Array<Card>}, {[string]: Array<Card>}, Array<Card>]
+  numericHandValue: number
 
   constructor(cards: Array<Card>) {
     // should
-    this.cards = cards
-    // Should determin value based on hand types by creating a tuple3
+    const ranks = groupByRank(cards)
+    const suits = groupBySuit(cards)
+    this.value = [ranks, suits, cards]
+    // Should determin numericHandValue based on hand types by creating a tuple3
     // tuple [Array<Rank | Kicker>, Array<Suit>, Array<Card>]
     // 1. count rank
     //    consecutive rank
     // 2. count suit
-    const ranks = (this.value = compose(lastIndexOf(true), handTypes)(cards))
+    this.numericHandValue = compose(lastIndexOf(true), handTypes)(cards)
   }
 
   toString() {
-    return `HandValue(${this.value})`
+    return `HandValue(${this.numericHandValue})`
   }
 
   // equals(that: HandValue) {
@@ -154,46 +156,46 @@ export default class HandValue {
   // }
 
   // lte(that: HandValue) {
-  //   return this.equals(that) || this.value <= that.value
+  //   return this.equals(that) || this.numericHandValue <= that.numericHandValue
   // }
 
   isHighCard() {
-    return this.value === 0
+    return this.numericHandValue === 0
   }
 
   isPair() {
-    return this.value === 1
+    return this.numericHandValue === 1
   }
 
   isTwoPair() {
-    return this.value === 2
+    return this.numericHandValue === 2
   }
 
   isThreeOfAKind() {
-    return this.value === 3
+    return this.numericHandValue === 3
   }
 
   isStraight() {
-    return this.value === 4
+    return this.numericHandValue === 4
   }
 
   isFlush() {
-    return this.value === 5
+    return this.numericHandValue === 5
   }
 
   isFullHouse() {
-    return this.value === 6
+    return this.numericHandValue === 6
   }
 
   isFourOfAKind() {
-    return this.value === 7
+    return this.numericHandValue === 7
   }
 
   isStraightFlush() {
-    return this.value === 8
+    return this.numericHandValue === 8
   }
 
   isRoyalFlush() {
-    return this.value === 9
+    return this.numericHandValue === 9
   }
 }

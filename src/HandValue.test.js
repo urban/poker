@@ -8,6 +8,7 @@ test('HandValue.of :: Card a => [a] -> HandValue', () => {
   const xs = map(Card.from, ['TH', '9H', '8H', '7H', '6H'])
   const a = HandValue.of(xs)
   const b = new HandValue(xs)
+  console.log(a.value)
 
   expect(equals(a, b)).toBe(true)
 })
