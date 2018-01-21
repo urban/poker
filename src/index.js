@@ -10,7 +10,7 @@ export const stringToHands = (s: string): Array<Hand> => {
 }
 
 export const compareHands = (xs: Array<Hand>): number => {
-  const [hand1, hand2] = map(compose(HandValue.of, x => x.cards), xs)
+  const [hand1, hand2] = map(compose(HandValue.of, x => x.$value), xs)
   return hand2.lte(hand1) ? 0 : 1
 }
 

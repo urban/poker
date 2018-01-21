@@ -9,20 +9,22 @@ export default class Card {
     return is(this, x)
   }
 
-  static of(rank: Rank, suit: Suit) {
-    return new Card(rank, suit)
+  static of([rank, suit]: [Rank, Suit]) {
+    return new Card([rank, suit])
   }
 
   static from(s: string) {
-    return new Card(Rank.from(s[0]), Suit.of(s[1]))
+    return new Card([Rank.from(s[0]), Suit.of(s[1])])
   }
 
-  rank: Rank
-  suit: Suit
+  $value: [Rank, Suit]
 
-  constructor(rank: Rank, suit: Suit) {
-    this.rank = rank
-    this.suit = suit
+  get isAce(): boolean {
+    return this.$value[0].$value === 14
+  }
+
+  constructor([rank, suit]: [Rank, Suit]) {
+    this.$value = [rank, suit]
 
     // $FlowFixMe
     this[fl.equals] = this.equals.bind(this)
@@ -32,27 +34,23 @@ export default class Card {
     this[fl.reduce] = this.reduce.bind(this)
   }
 
-  toString() {
-    return `Card(${this.rank.toString()}, ${this.suit.toString()})`
+  inspect() {
+    return `Card(${this.$value[0].inspect()}, ${this.$value[1].inspect()})`
   }
 
   toArray() {
     return [this]
   }
 
-  get isAce(): boolean {
-    return this.rank.value === 14
-  }
-
   equals(that: Card) {
-    return this.rank.equals(that.rank) && this.suit.equals(that.suit)
+    return this.$value[0].equals(that.$value[0])
   }
 
   lte(that: Card) {
-    return this.rank.lte(that.rank)
+    return this.$value[0].lte(that.$value[0])
   }
 
   reduce<T>(f: Function, x: T): T {
-    return f(x, {rank: this.rank, suit: this.suit})
+    return f(x, this.$value)
   }
 }

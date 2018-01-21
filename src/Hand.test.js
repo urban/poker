@@ -25,9 +25,9 @@ test('Hand.is :: Any -> Boolean', () => {
   expect(Hand.is(a)).toBe(true)
 })
 
-test('Hand.toString :: Hand a ~> () -> String', () => {
+test('Hand.inspect :: Hand a ~> () -> String', () => {
   const a = Hand.from(['TH'])
-  const showable = equals(a.toString(), 'Hand(Card(Rank(10), Suit(H)))')
+  const showable = equals(a.inspect(), 'Hand(Card(Rank(10), Suit(H)))')
 
   expect(showable).toBe(true)
 })

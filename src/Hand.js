@@ -1,15 +1,5 @@
 // @flow
-import {
-  all,
-  compose,
-  concat,
-  equals,
-  is,
-  map,
-  sort,
-  toString,
-  zipWith,
-} from 'ramda'
+import {all, compose, concat, equals, is, map, sort, zipWith} from 'ramda'
 import fl from 'fantasy-land'
 import Card from './Card'
 
@@ -31,10 +21,10 @@ export default class Hand {
     return compose(Hand.of, cardSort, map(Card.from))(xs)
   }
 
-  cards: Array<Card>
+  $value: Array<Card>
 
   constructor(cards: Array<Card>) {
-    this.cards = cards
+    this.$value = cards
     // $FlowFixMe
     this[fl.concat] = this.concat.bind(this)
     // $FlowFixMe
@@ -43,8 +33,8 @@ export default class Hand {
     this[fl.reduce] = this.reduce.bind(this)
   }
 
-  toString() {
-    return `Hand(${map(toString, this.cards).toString()})`
+  inspect() {
+    return `Hand(${map(x => x.inspect(), this.$value).toString()})`
   }
 
   toArray() {
@@ -52,14 +42,14 @@ export default class Hand {
   }
 
   concat(that: Hand) {
-    return compose(Hand.of, cardSort, concat(this.cards))(that.cards)
+    return compose(Hand.of, cardSort, concat(this.$value))(that.$value)
   }
 
   equals(that: Hand) {
-    return compose(all(equals(true)), zipWith(equals, this.cards))(that.cards)
+    return compose(all(equals(true)), zipWith(equals, this.$value))(that.$value)
   }
 
   reduce<T>(f: Function, x: T): T {
-    return f(x, this.cards)
+    return f(x, this.$value)
   }
 }

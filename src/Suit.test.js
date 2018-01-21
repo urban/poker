@@ -14,9 +14,9 @@ test('Suit.is :: Any -> Boolean', () => {
   expect(Suit.is(a)).toBe(true)
 })
 
-test('Suit.toString :: Suit a ~> () -> String', () => {
+test('Suit.inspect :: Suit a ~> () -> String', () => {
   const a = Suit.of('H')
-  const showable = equals(a.toString(), 'Suit(H)')
+  const showable = equals(a.inspect(), 'Suit(H)')
 
   expect(showable).toBe(true)
 })

@@ -9,8 +9,8 @@ import Suit from './Suit'
 test('Card.of :: Int -> Card', () => {
   const rank = Rank.of(10)
   const suit = Suit.of('H')
-  const a = Card.of(rank, suit)
-  const b = new Card(rank, suit)
+  const a = Card.of([rank, suit])
+  const b = new Card([rank, suit])
   expect(equals(a, b)).toBe(true)
 })
 
@@ -20,7 +20,7 @@ test('Card.is :: Any -> Boolean', () => {
 })
 
 test('Card.from :: String -> Card', () => {
-  const a = Card.of(Rank.of(10), Suit.of('H'))
+  const a = Card.of([Rank.of(10), Suit.of('H')])
   const b = Card.from('TH')
   expect(equals(a, b)).toBe(true)
 })
@@ -32,9 +32,9 @@ test('Card#isAce :: Card a ~> Boolean', () => {
   expect(b.isAce).toBe(false)
 })
 
-test('Card.toString :: Card a ~> () -> String', () => {
+test('Card.inspect :: Card a ~> () -> String', () => {
   const a = Card.from('TH')
-  const showable = equals(a.toString(), 'Card(Rank(10), Suit(H))')
+  const showable = equals(a.insepect(), 'Card(Rank(10), Suit(H))')
 
   expect(showable).toBe(true)
 })

@@ -1,7 +1,24 @@
 // @flow
-import {compose, is, trim} from 'ramda'
+import {compose, invertObj, is, trim} from 'ramda'
 import fl from 'fantasy-land'
-import stringToRank from './stringToRank'
+
+const rankIdentifiers = {T: '10', J: '11', Q: '12', K: '13', A: '14'}
+const stringIdentifiers = invertObj(rankIdentifiers)
+
+export const stringToRank = (s: string): Rank =>
+  compose(
+    Rank.of,
+    parseInt,
+    (x: string): string => rankIdentifiers[x] || x,
+    trim
+  )(s)
+
+export const rankToString = (x: Rank): string =>
+  compose(
+    (x: string): string => stringIdentifiers[x] || x,
+    String,
+    (x: Rank): number => x.$value
+  )(x)
 
 export default class Rank {
   static is(x: any) {
@@ -16,10 +33,10 @@ export default class Rank {
     return stringToRank(x)
   }
 
-  value: number
+  $value: number
 
   constructor(x: number) {
-    this.value = x
+    this.$value = x
 
     // $FlowFixMe
     this[fl.equals] = this.equals.bind(this)
@@ -29,9 +46,8 @@ export default class Rank {
     this[fl.reduce] = this.reduce.bind(this)
   }
 
-  // showable
-  toString() {
-    return `${this.constructor.name}(${this.value})`
+  inspect() {
+    return `Rank(${this.$value})`
   }
 
   toArray() {
@@ -39,14 +55,14 @@ export default class Rank {
   }
 
   equals(that: Rank) {
-    return this.value === that.value
+    return this.$value === that.$value
   }
 
   lte(that: Rank) {
-    return this.value <= that.value
+    return this.$value <= that.$value
   }
 
   reduce<T>(f: Function, x: T): T {
-    return f(x, this.value)
+    return f(x, this.$value)
   }
 }

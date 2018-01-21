@@ -11,18 +11,18 @@ export default class Suit {
     return new Suit(x)
   }
 
-  value: string
+  $value: string
 
   constructor(x: string) {
-    this.value = x
+    this.$value = x
     // $FlowFixMe
     this[fl.equals] = this.equals.bind(this)
     // $FlowFixMe
     this[fl.reduce] = this.reduce.bind(this)
   }
 
-  toString() {
-    return `Suit(${this.value})`
+  inspect() {
+    return `Suit(${this.$value})`
   }
 
   toArray() {
@@ -30,10 +30,10 @@ export default class Suit {
   }
 
   equals(that: Suit) {
-    return this.value === that.value
+    return this.$value === that.$value
   }
 
   reduce<T>(f: Function, x: T): T {
-    return f(x, this.value)
+    return f(x, this.$value)
   }
 }

@@ -73,10 +73,10 @@ test('HandValue.is :: Any -> Boolean', () => {
   expect(HandValue.is(b)).toBe(false)
 })
 
-test('HandValue.toString :: HandValue a ~> () -> String', () => {
+test('HandValue.inspect :: HandValue a ~> () -> String', () => {
   const xs = map(Card.from, ['2H', '3D', '8H', '7H', '6H'])
   const a = HandValue.of(xs)
-  const showable = equals(a.toString(), 'HandValue(0)')
+  const showable = equals(a.inspect(), 'HandValue(0)')
 
   expect(showable).toBe(true)
 })
