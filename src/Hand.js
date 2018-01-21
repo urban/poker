@@ -14,7 +14,7 @@ import fl from 'fantasy-land'
 import Card from './Card'
 
 const cardSort = sort(
-  (a: Card, b: ?Card) => (!b ? 0 : a.rank.lte(b.rank) ? 1 : -1)
+  (a: Card, b: ?Card) => (!b || a.equals(b) ? 0 : a.lte(b) ? 1 : -1)
 )
 
 export default class Hand {

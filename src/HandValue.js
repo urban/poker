@@ -1,6 +1,7 @@
 // @flow
 import {
   all,
+  allPass,
   ap,
   apply,
   compose,
@@ -22,88 +23,50 @@ import {
   values,
   zipWith,
 } from 'ramda'
+import fl from 'fantasy-land'
 import Rank from './Rank'
-import Kicker from './Kicker'
 import Card from './Card'
 
 const cardRank = path(['rank', 'value'])
 const cardSuit = path(['suit', 'value'])
 const groupByRank = groupBy(compose(toString, cardRank))
 const groupBySuit = groupBy(compose(toString, cardSuit))
-
-const sortByRank = sort(
-  (a: Card, b: Card) => (a.equals(b) ? 0 : a.lte(b) ? 1 : -1)
-)
-
-const handRank = (xs: Array<Card>) =>
-  compose(
-    map(x => !Kicker.is(x)),
-    sort(<T: Rank | Kicker>(a: T, b: ?T) => {
-      if (!b) {
-        return 0
-      }
-      if (!Kicker.is(a) && Kicker.is(b)) {
-        return -1
-      }
-      if (Kicker.is(a) && !Kicker.is(b)) {
-        return 1
-      }
-      return a.equals(b) ? 0 : a.lte(b) ? 1 : -1
-    }),
-    map(
-      ([k, v]: [string, Array<Card>]): Rank | Kicker =>
-        v.length > 1 ? Rank.from(k) : Kicker.from(k)
-    ),
-    toPairs,
-    groupByRank
-  )(xs)
-
-const numberInSameSuit = compose(
-  apply(Math.max),
-  values,
-  map(length),
-  groupBySuit
-)
-
+const descending = (a, b) => (a == b ? 0 : a > b ? -1 : 1)
+const groupSize = compose(sort(descending), values, map(length))
 const allTrue = all(equals(true))
-const isSequential = (cards: Array<Card>) => {
-  const xs = map(x => x.rank, cards)
-  const hasAce = xs[0].value === 14
-  const ys = hasAce ? tail(xs) : xs
-  const highCardValue = ys[0].value
-  const comparitor = [...Array(ys.length).keys()].map(x =>
-    Kicker.of(highCardValue - x)
-  )
-  const isSequential = compose(allTrue, zipWith(equals, comparitor))(ys)
 
-  return (
-    (hasAce && highCardValue === 5 && isSequential) ||
-    (hasAce && highCardValue === 13 && isSequential) ||
-    isSequential
-  )
-}
+export const numberInSameRank = compose(groupSize, groupByRank)
+export const numberInSameSuit = compose(groupSize, groupBySuit)
+export const isSequential = (cards: Array<Card>) => {
+  const xs = compose(sort(descending), map(cardRank))(cards)
+  const isHighStraight = equals([14, 13, 12, 11, 10])
+  if (isHighStraight(xs)) return true
 
-const highCard = (xs: Array<Card>) =>
-  compose(equals([false, false, false, false, false]), handRank)(xs)
-const onePair = (xs: Array<Card>) =>
-  compose(equals([true, false, false, false]), handRank)(xs)
-const twoPair = (xs: Array<Card>) =>
-  compose(equals([true, true, false]), handRank)(xs)
-const threeOfAKind = (xs: Array<Card>) =>
-  compose(equals([true, false, false]), handRank)(xs)
-const straight = (xs: Array<Card>) => compose(isSequential, sortByRank)(xs)
-const flush = compose(equals(5), numberInSameSuit)
-const fullHouse = (xs: Array<Card>) =>
-  compose(equals([true, true]), handRank)(xs)
-const fourOfAKind = (xs: Array<Card>) =>
-  compose(equals([true, false]), handRank)(xs)
-const straightFlush = (xs: Array<Card>) => straight(xs) && flush(xs)
-const royalFlush = (xs: Array<Card>) => {
-  const isStraightFlush = straightFlush(xs)
-  const isAce = (x: Card) => x.rank.value === 14
-  const [highCard, ...rest] = sortByRank(xs)
-  return isStraightFlush && isAce(highCard)
+  const isLowStraight = equals([14, 5, 4, 3, 2])
+  if (isLowStraight(xs)) return true
+
+  const highCardValue: number = xs[0]
+  const comparitor = [...Array(xs.length).keys()].map(x => highCardValue - x)
+  const isSequential = compose(allTrue, zipWith(equals, comparitor))(xs)
+
+  return isSequential
 }
+const isHighStraight = compose(
+  equals([14, 13, 12, 11, 10]),
+  sort(descending),
+  map(cardRank)
+)
+
+const highCard = compose(equals([1, 1, 1, 1, 1]), numberInSameRank)
+const onePair = compose(equals([2, 1, 1, 1]), numberInSameRank)
+const twoPair = compose(equals([2, 2, 1]), numberInSameRank)
+const threeOfAKind = compose(equals([3, 1, 1]), numberInSameRank)
+const straight = isSequential
+const flush = compose(equals(5), apply(Math.max), numberInSameSuit)
+const fullHouse = compose(equals([3, 2]), numberInSameRank)
+const fourOfAKind = compose(equals([4, 1]), numberInSameRank)
+const straightFlush = (xs: Array<Card>) => allPass([straight, flush])(xs)
+const royalFlush = (xs: Array<Card>) => allPass([flush, isHighStraight])(xs)
 
 const handTypes = (xs: Array<Card>) =>
   ap(
@@ -122,6 +85,11 @@ const handTypes = (xs: Array<Card>) =>
     [xs]
   )
 
+// type Tuple3 = [Array<Rank | Kicker>, Array<Suit>, Array<Card>]
+
+// const handTypes = (value: Tuple3): Array<boolean> =>
+//   ap([([ranks]) => equals([false, false, false, false, false], ranks)])
+
 export default class HandValue {
   static is(x: any) {
     return is(HandValue, x)
@@ -135,29 +103,25 @@ export default class HandValue {
   numericHandValue: number
 
   constructor(cards: Array<Card>) {
-    // should
-    const ranks = groupByRank(cards)
-    const suits = groupBySuit(cards)
-    this.value = [ranks, suits, cards]
-    // Should determin numericHandValue based on hand types by creating a tuple3
-    // tuple [Array<Rank | Kicker>, Array<Suit>, Array<Card>]
-    // 1. count rank
-    //    consecutive rank
-    // 2. count suit
     this.numericHandValue = compose(lastIndexOf(true), handTypes)(cards)
+
+    // $FlowFixMe
+    this[fl.equals] = this.equals.bind(this)
+    // $FlowFixMe
+    this[fl.lte] = this.lte.bind(this)
   }
 
   toString() {
     return `HandValue(${this.numericHandValue})`
   }
 
-  // equals(that: HandValue) {
-  //   return compose(all(equals(true)), zipWith(equals, this.cards))(that.cards)
-  // }
+  equals(that: HandValue) {
+    return this.numericHandValue === that.numericHandValue
+  }
 
-  // lte(that: HandValue) {
-  //   return this.equals(that) || this.numericHandValue <= that.numericHandValue
-  // }
+  lte(that: HandValue) {
+    return this.numericHandValue <= that.numericHandValue
+  }
 
   isHighCard() {
     return this.numericHandValue === 0

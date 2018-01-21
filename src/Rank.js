@@ -1,7 +1,6 @@
 // @flow
 import {compose, is, trim} from 'ramda'
 import fl from 'fantasy-land'
-import type Kicker from './Kicker'
 import stringToRank from './stringToRank'
 
 export default class Rank {
@@ -27,7 +26,8 @@ export default class Rank {
     // $FlowFixMe
     this[fl.lte] = this.lte.bind(this)
     // $FlowFixMe
-    this[fl.reduce] = this.reduce.bind(this) }
+    this[fl.reduce] = this.reduce.bind(this)
+  }
 
   // showable
   toString() {
@@ -38,11 +38,11 @@ export default class Rank {
     return [this]
   }
 
-  equals(that: Rank | Kicker) {
+  equals(that: Rank) {
     return this.value === that.value
   }
 
-  lte(that: Rank | Kicker) {
+  lte(that: Rank) {
     return this.value <= that.value
   }
 

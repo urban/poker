@@ -6,9 +6,9 @@
   },
   "scripts": {
     "build": "babel src/ -d dist/",
-    "start": "babel-node ./src/index.js",
+    "start": "babel-node ./index.js",
     "format": "prettier --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\"",
-    "flow": "flow status",
+    "typecheck": "flow",
     "test": "jest"
   },
   "devDependencies": {
