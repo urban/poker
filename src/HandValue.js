@@ -27,8 +27,8 @@ import fl from 'fantasy-land'
 import Rank from './Rank'
 import Card from './Card'
 
-const cardRank = path(['rank', 'value'])
-const cardSuit = path(['suit', 'value'])
+const cardRank = path(['rank', '$value'])
+const cardSuit = path(['suit', '$value'])
 const groupByRank = groupBy(compose(toString, cardRank))
 const groupBySuit = groupBy(compose(toString, cardSuit))
 const descending = (a, b) => (a == b ? 0 : a > b ? -1 : 1)

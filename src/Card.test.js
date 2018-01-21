@@ -25,16 +25,9 @@ test('Card.from :: String -> Card', () => {
   expect(equals(a, b)).toBe(true)
 })
 
-test('Card#isAce :: Card a ~> Boolean', () => {
-  const a = Card.from('AH')
-  const b = Card.from('TH')
-  expect(a.isAce).toBe(true)
-  expect(b.isAce).toBe(false)
-})
-
 test('Card.inspect :: Card a ~> () -> String', () => {
   const a = Card.from('TH')
-  const showable = equals(a.insepect(), 'Card(Rank(10), Suit(H))')
+  const showable = equals(a.inspect(), 'Card(Rank(10), Suit(H))')
 
   expect(showable).toBe(true)
 })

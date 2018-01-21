@@ -19,8 +19,12 @@ export default class Card {
 
   $value: [Rank, Suit]
 
-  get isAce(): boolean {
-    return this.$value[0].$value === 14
+  get rank(): Rank {
+    return this.$value[0]
+  }
+
+  get suit(): Suit {
+    return this.$value[1]
   }
 
   constructor([rank, suit]: [Rank, Suit]) {
