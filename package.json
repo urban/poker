@@ -8,7 +8,7 @@
     "build": "babel src/ -d dist/",
     "start": "babel-node ./index.js",
     "format": "prettier --no-semi --single-quote --trailing-comma es5 --write \"src/**/*.js\"",
-    "typecheck": "flow",
+    "typecheck": "glow",
     "test": "jest"
   },
   "devDependencies": {
@@ -17,6 +17,7 @@
     "babel-preset-env": "1.6.1",
     "babel-preset-flow": "6.23.0",
     "flow-bin": "0.61.0",
+    "glow": "1.1.2",
     "jest-cli": "21.2.1",
     "prettier": "1.8.2"
   }
