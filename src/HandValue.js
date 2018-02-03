@@ -39,17 +39,11 @@ export const numberInSameRank = compose(sortBySize, groupByRank)
 export const numberInSameSuit = compose(sortBySize, groupBySuit)
 export const isSequential = (cards: Array<Card>) => {
   const xs = compose(sort(descending), map(cardRank))(cards)
-  const isHighStraight = equals([14, 13, 12, 11, 10])
-  if (isHighStraight(xs)) return true
 
   const isLowStraight = equals([14, 5, 4, 3, 2])
   if (isLowStraight(xs)) return true
 
-  const highCardValue: number = xs[0]
-  const comparitor = [...Array(xs.length).keys()].map(x => highCardValue - x)
-  const isSequential = compose(allTrue, zipWith(equals, comparitor))(xs)
-
-  return isSequential
+  return xs[0] - xs[4] === 4
 }
 const isHighStraight = compose(
   equals([14, 13, 12, 11, 10]),
